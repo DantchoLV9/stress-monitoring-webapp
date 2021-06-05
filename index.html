@@ -5,6 +5,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stress Monitor</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -22,7 +24,15 @@
                     <option value="week">20 - 26/06/2021</option>
                 </select>
             </div>
+            <div class="chart-container">
+                <h2>Weekly Stress</h2>
+                <div class="chart"></div>
+            </div>
         </section>
+        <button class="add-button">
+            <div class="line1"></div>
+            <div class="line2"></div>
+        </button>
     </main>
     <svg class="cloud1" width="542" height="264" viewBox="0 0 542 264" fill="none" xmlns="http://www.w3.org/2000/svg">
         <circle cx="409.972" cy="132" r="132" fill="#E5E5E5"/>
@@ -36,7 +46,9 @@
         <circle cx="231" cy="217" r="121" fill="#E5E5E5"/>
         <circle cx="412" cy="162" r="162" fill="#E5E5E5"/>
         <rect x="109" y="216" width="419" height="160" fill="#E5E5E5"/>
-    </svg>        
+    </svg>      
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2/dist/chart.min.js" integrity="sha256-qoN08nWXsFH+S9CtIq99e5yzYHioRHtNB9t2qy1MSmc=" crossorigin="anonymous"></script>  
+    <script src="barChart.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
