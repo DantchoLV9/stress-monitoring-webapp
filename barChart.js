@@ -1,4 +1,5 @@
 const chartArea = document.querySelector(".chart");
+const chartMode = "week";
 
 // Creating Experimental Data
 let data = [];
