@@ -96,6 +96,7 @@ select {
 	font-weight: bold;
 	color: white;
 	outline: none;
+	cursor: pointer;
 }
 
 select option {
@@ -184,4 +185,67 @@ select option {
 
 .add-button .line2 {
 	transform: rotate(90deg) translateX(-5%);
+}
+
+.active .line1 {
+	transform: rotate(45deg) translateX(2%);
+}
+
+.active:hover .line1 {
+	transform: rotate(45deg) translateX(2%) scale(1.5);
+}
+
+.active .line2 {
+	transform: rotate(-45deg) translateX(3%);
+}
+
+.active:hover .line2 {
+	transform: rotate(-45deg) translateX(3%) scale(1.5);
+}
+
+/* Input Popup */
+
+.input-wrapper {
+	position: fixed;
+	top: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.5);
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	transition: all 0.5s ease-in-out;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.input-wrapper.active {
+	opacity: 1;
+	pointer-events: all;
+}
+
+.input-popup {
+	background: white;
+
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-around;
+	height: 30vh;
+	width: 20%;
+	border-radius: 2rem;
+}
+
+.input-submit-button {
+	background: linear-gradient(to right bottom, #60c6ff, #298cff);
+	font-size: 1rem;
+	padding: 0.5rem;
+	border: none;
+	border-radius: 10px;
+	font-weight: bold;
+	color: white;
+	cursor: pointer;
+	padding-left: 2rem;
+	padding-right: 2rem;
 }
