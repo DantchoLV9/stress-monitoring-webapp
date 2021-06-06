@@ -1,4 +1,6 @@
 const chartArea = document.querySelector(".chart");
+const barsWrapper = chartArea.querySelector(".bars-wrapper");
+const textWrapper = chartArea.querySelector(".text-wrapper");
 const chartMode = "week";
 
 // Creating Experimental Data
@@ -10,13 +12,28 @@ for (let i = 0; i < 7; i++) {
 }
 console.log(data);
 
-function createBar(height) {
+function generateTable(data) {
+	let chartHeight = barsWrapper.offsetHeight;
+	console.log(chartHeight);
+	data.forEach((item) => {
+		console.log(item);
+		createBar((chartHeight / 5) * item[1], item[0]);
+		createBar((chartHeight / 5) * item[1], item[0]);
+	});
+}
+
+function createBar(height, text) {
 	let bar = document.createElement("div");
 	bar.classList.add("bar");
 	bar.style.height = height + "px";
-	chartArea.appendChild(bar);
+	barsWrapper.appendChild(bar);
+
+	let label = document.createElement("p");
+	label.innerText = text;
+	textWrapper.appendChild(label);
 }
 
 function clearChart() {
-	chartArea.innerHTML = "";
+	barsWrapper.innerHTML = "";
+	textWrapper.innerHTML = "";
 }
