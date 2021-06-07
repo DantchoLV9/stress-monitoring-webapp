@@ -10,7 +10,7 @@ for (let i = 0; i < 7; i++) {
 	data[i][0] = "0" + (i + 1) + "/06/2021";
 	data[i][1] = Math.floor(Math.random() * 5);
 }
-console.log(data);
+//console.log(data);
 
 function generateTable(data) {
 	let chartHeight = barsWrapper.offsetHeight;
