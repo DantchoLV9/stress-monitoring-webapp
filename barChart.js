@@ -18,7 +18,6 @@ function generateTable(data) {
 	data.forEach((item) => {
 		console.log(item);
 		createBar((chartHeight / 5) * item[1], item[0]);
-		createBar((chartHeight / 5) * item[1], item[0]);
 	});
 }
 
