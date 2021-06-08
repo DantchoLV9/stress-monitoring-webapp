@@ -230,6 +230,12 @@ select option {
 	height: 30vh;
 	width: 20%;
 	border-radius: 2rem;
+	transform: scale(1.3);
+	transition: transform 0.5s ease-in-out;
+}
+
+.input-popup.active {
+	transform: scale(1);
 }
 
 .input-form {

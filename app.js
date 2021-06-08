@@ -1,4 +1,5 @@
-const inputPopup = document.querySelector(".input-wrapper");
+const inputPopupContainer = document.querySelector(".input-wrapper");
+const inputPopup = document.querySelector(".input-popup");
 const inputPopupToggleButton = document.querySelector(".add-button");
 const inputSubmitButton = document.querySelector(".input-submit-button");
 const inputForm = document.querySelector(".input-form");
@@ -21,8 +22,9 @@ window.onload = () => {
 // Input Popup Functions
 
 function toggleInputPopup() {
-	inputPopup.classList.toggle("active");
+	inputPopupContainer.classList.toggle("active");
 	inputPopupToggleButton.classList.toggle("active");
+	inputPopup.classList.toggle("active");
 }
 
 function processNewRecord() {
