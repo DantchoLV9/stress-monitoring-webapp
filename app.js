@@ -26,11 +26,13 @@ function closeInputPopup() {
 function processNewRecord() {
 	let { year, month, day, stressLevel } = inputForm.elements;
 	let monthValue = getMonthFromString(month.value);
-	let date = `${day.value}/${monthValue}/${year.value}`;
+	let date = `${year.value}/${monthValue}/${day.value}`;
 	let newRecord = [];
 	newRecord[0] = date;
 	newRecord[1] = parseInt(stressLevel.value);
 	saveLocalStorage(newRecord);
+	clearChart();
+	generateChart(loadLocalStorage());
 }
 
 function getMonthFromString(month) {
@@ -81,5 +83,10 @@ function saveLocalStorage(data) {
 	if (!override) {
 		localData.push(data);
 	}
+	localData.sort();
 	localStorage.setItem("stressData", JSON.stringify(localData));
 }
+
+// Generate Chart
+
+generateChart(loadLocalStorage());
