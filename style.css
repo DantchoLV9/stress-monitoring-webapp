@@ -253,3 +253,18 @@ select option {
 	padding-left: 2rem;
 	padding-right: 2rem;
 }
+
+.date-input {
+	background: linear-gradient(to right bottom, #60c6ff, #298cff);
+	font-size: 1rem;
+	padding: 0.5rem;
+	border: none;
+	border-radius: 10px;
+	font-weight: bold;
+	color: white;
+	outline: none;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+	filter: invert(100%);
+}

@@ -11,6 +11,13 @@ inputSubmitButton.addEventListener("click", (e) => {
 	processNewRecord();
 });
 
+// Set date input default value & limit
+window.onload = () => {
+	let { date } = inputForm.elements;
+	date.valueAsDate = new Date();
+	date.max = date.value;
+};
+
 // Input Popup Functions
 
 function toggleInputPopup() {
@@ -24,34 +31,13 @@ function closeInputPopup() {
 }
 
 function processNewRecord() {
-	let { year, month, day, stressLevel } = inputForm.elements;
-	let monthValue = getMonthFromString(month.value);
-	let date = `${year.value}/${monthValue}/${day.value}`;
+	let { date, stressLevel } = inputForm.elements;
 	let newRecord = [];
-	newRecord[0] = date;
+	newRecord[0] = date.value;
 	newRecord[1] = parseInt(stressLevel.value);
 	saveLocalStorage(newRecord);
 	clearChart();
 	generateChart(loadLocalStorage());
-}
-
-function getMonthFromString(month) {
-	let months = [
-		"january",
-		"february",
-		"march",
-		"april",
-		"may",
-		"june",
-		"july",
-		"august",
-		"september",
-		"october",
-		"november",
-		"december",
-	];
-	let monthIndex = months.findIndex((monthName) => monthName === month);
-	return monthIndex + 1;
 }
 
 // Local Storage Functions
