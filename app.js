@@ -7,7 +7,7 @@ const inputForm = document.querySelector(".input-form");
 inputPopupToggleButton.addEventListener("click", toggleInputPopup);
 inputSubmitButton.addEventListener("click", (e) => {
 	e.preventDefault();
-	closeInputPopup();
+	toggleInputPopup();
 	processNewRecord();
 });
 
@@ -25,18 +25,12 @@ function toggleInputPopup() {
 	inputPopupToggleButton.classList.toggle("active");
 }
 
-function closeInputPopup() {
-	inputPopup.classList.remove("active");
-	inputPopupToggleButton.classList.remove("active");
-}
-
 function processNewRecord() {
 	let { date, stressLevel } = inputForm.elements;
 	let newRecord = [];
 	newRecord[0] = date.value;
 	newRecord[1] = parseInt(stressLevel.value);
 	saveLocalStorage(newRecord);
-	clearChart();
 	generateChart(loadLocalStorage());
 }
 

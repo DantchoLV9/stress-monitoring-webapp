@@ -3,6 +3,7 @@ const barsWrapper = chartArea.querySelector(".bars-wrapper");
 const textWrapper = chartArea.querySelector(".text-wrapper");
 
 function generateChart(data) {
+	clearChart();
 	let chartHeight = barsWrapper.offsetHeight;
 	data.forEach((item) => {
 		createBar((chartHeight / 5) * item[1], item[0]);
