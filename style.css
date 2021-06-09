@@ -37,6 +37,7 @@ body {
 	top: 25vh;
 	left: 5rem;
 	z-index: -1;
+	animation: cloud1Movement 15s infinite alternate-reverse;
 }
 
 .cloud2 {
@@ -45,6 +46,25 @@ body {
 	top: 3rem;
 	right: 5rem;
 	z-index: -1;
+	animation: cloud2Movement 10s infinite alternate-reverse;
+}
+
+@keyframes cloud1Movement {
+	from {
+		transform: translateY(3rem);
+	}
+	to {
+		transform: translateY(0rem);
+	}
+}
+
+@keyframes cloud2Movement {
+	from {
+		transform: translateX(-5rem);
+	}
+	to {
+		transform: translateX(0rem);
+	}
 }
 
 /* Main Content */
