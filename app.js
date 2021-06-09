@@ -21,12 +21,17 @@ chartModeInput.addEventListener("change", changeChartMode);
 /*
 	Runs on page load
 	Sets date input default value & limit
+	Sets default values to chart range inputs
 	Generates chart range dropdown dates
 */
 window.onload = () => {
 	let { date } = inputForm.elements;
 	date.valueAsDate = new Date();
 	date.max = date.value;
+	rangeMonthInput.valueAsDate = new Date();
+	rangeMonthInput.max = rangeMonthInput.value;
+	rangeWeekInput.valueAsDate = new Date();
+	rangeWeekInput.max = rangeWeekInput.value;
 	generateDates(2000);
 };
 
@@ -45,14 +50,12 @@ function changeChartMode() {
 			rangeYearInput.classList.add("display-none");
 			rangeMonthInput.classList.remove("display-none");
 			rangeWeekInput.classList.add("display-none");
-
 			break;
 		case "year":
 			chartTitle.innerText = "Yearly Stress";
 			rangeYearInput.classList.remove("display-none");
 			rangeMonthInput.classList.add("display-none");
 			rangeWeekInput.classList.add("display-none");
-
 			break;
 	}
 }
