@@ -3,6 +3,11 @@ const inputPopup = document.querySelector(".input-popup");
 const inputPopupToggleButton = document.querySelector(".add-button");
 const inputSubmitButton = document.querySelector(".input-submit-button");
 const inputForm = document.querySelector(".input-form");
+const chartModeInput = document.querySelector(".chart-mode");
+const chartTitle = document.querySelector(".chart-title");
+const rangeYearInput = document.querySelector(".range-year");
+const rangeMonthInput = document.querySelector(".range-month");
+const rangeWeekInput = document.querySelector(".range-week");
 
 // Event Listeners
 inputPopupToggleButton.addEventListener("click", toggleInputPopup);
@@ -11,13 +16,56 @@ inputSubmitButton.addEventListener("click", (e) => {
 	toggleInputPopup();
 	processNewRecord();
 });
+chartModeInput.addEventListener("change", changeChartMode);
 
-// Set date input default value & limit
+/*
+	Runs on page load
+	Sets date input default value & limit
+	Generates chart range dropdown dates
+*/
 window.onload = () => {
 	let { date } = inputForm.elements;
 	date.valueAsDate = new Date();
 	date.max = date.value;
+	generateDates(2000);
 };
+
+// Chart Controls
+
+function changeChartMode() {
+	switch (chartModeInput.value) {
+		case "week":
+			chartTitle.innerText = "Weekly Stress";
+			rangeYearInput.classList.add("display-none");
+			rangeMonthInput.classList.add("display-none");
+			rangeWeekInput.classList.remove("display-none");
+			break;
+		case "month":
+			chartTitle.innerText = "Monthly Stress";
+			rangeYearInput.classList.add("display-none");
+			rangeMonthInput.classList.remove("display-none");
+			rangeWeekInput.classList.add("display-none");
+
+			break;
+		case "year":
+			chartTitle.innerText = "Yearly Stress";
+			rangeYearInput.classList.remove("display-none");
+			rangeMonthInput.classList.add("display-none");
+			rangeWeekInput.classList.add("display-none");
+
+			break;
+	}
+}
+
+function generateDates(startDate) {
+	let endDate = new Date().getFullYear();
+	for (let i = endDate; i >= startDate; i--) {
+		let option = document.createElement("option");
+		option.innerText = i;
+		option.value = i;
+		rangeYearInput.append(option);
+	}
+}
 
 // Input Popup Functions
 

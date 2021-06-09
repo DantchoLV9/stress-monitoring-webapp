@@ -127,6 +127,29 @@ select option {
 	float: right;
 }
 
+input[type="week"],
+input[type="month"] {
+	background: linear-gradient(to right bottom, #60c6ff, #298cff);
+	font-size: 1rem;
+	padding: 0.5rem;
+	border: none;
+	border-radius: 10px;
+	font-weight: bold;
+	color: white;
+	outline: none;
+	cursor: pointer;
+	height: 35px;
+}
+
+input[type="week"]::-webkit-calendar-picker-indicator,
+input[type="month"]::-webkit-calendar-picker-indicator {
+	filter: invert(100%);
+}
+
+.display-none {
+	display: none;
+}
+
 /* Chart */
 
 .chart-container {

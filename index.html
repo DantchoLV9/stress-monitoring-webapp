@@ -14,17 +14,16 @@
         <section class="content">
             <div class="chart-controls">
                 <select class="chart-mode" name="chart-mode">
-                    <option value="year">Year</option>
+                    <option value="week" selected>Week</option>
                     <option value="month">Month</option>
-                    <option value="week">Week</option>
+                    <option value="year">Year</option>
                 </select>
-                <select class="chart-range" name="chart-range">
-                    <option value="year">6 - 12/06/2021</option>
-                    <option value="month">13 - 19/06/2021</option>
-                    <option value="week">20 - 26/06/2021</option>
+                <select class="chart-range range-year display-none" name="chart-range">
                 </select>
+                <input type="month" class="chart-range range-month display-none" name="chart-range">
+                <input type="week" class="chart-range range-week" name="chart-range">
             </div>
-            <h2>Weekly Stress</h2>
+            <h2 class="chart-title">Weekly Stress</h2>
             <div class="chart-container">
                 <div class="chart">
                     <div class="bars-wrapper">
