@@ -101,35 +101,14 @@ function setMinValues() {
 		(oldestDate.getMonth() > 8
 			? oldestDate.getMonth() + 1
 			: "0" + (oldestDate.getMonth() + 1));
-	let oldestWeek = getWeekNumber(oldestDate);
+	let oldestWeek = oldestDate.getWeekNumber();
 	rangeMonthInput.min = oldestMonth;
 	rangeWeekInput.min =
 		oldestDate.getFullYear() +
 		"-W" +
 		(oldestWeek > 9 ? oldestWeek : "0" + oldestWeek);
 	generateDates(oldestYear);
-
-	console.log(getWeekNumber(oldestDate));
 }
-
-function getWeekNumber(date) {
-	let dayNumberInWeek = new Date(date).getDay() + 1;
-	let start = new Date(date.getFullYear(), 0, 0 - dayNumberInWeek);
-	let difference =
-		date -
-		start +
-		(start.getTimezoneOffset() - date.getTimezoneOffset() * 60 * 1000);
-	let oneDay = 1000 * 60 * 60 * 24;
-	let day = Math.round(difference / oneDay);
-	let weekNumber = Math.ceil(day / 7);
-	return weekNumber;
-}
-
-/* -------------------------------------------------------------------------------
-
-+================================================================================+
-| Backup function copied from internet if I find that the above one doesn't work |
-+================================================================================+
 
 Date.prototype.getWeekNumber = function () {
 	var d = new Date(
@@ -140,8 +119,6 @@ Date.prototype.getWeekNumber = function () {
 	var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
 	return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
 };
-
-------------------------------------------------------------------------------- */
 
 function generateDates(startDate) {
 	rangeYearInput.innerHTML = "";
