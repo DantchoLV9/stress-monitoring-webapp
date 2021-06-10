@@ -8,6 +8,8 @@ const chartTitle = document.querySelector(".chart-title");
 const rangeYearInput = document.querySelector(".range-year");
 const rangeMonthInput = document.querySelector(".range-month");
 const rangeWeekInput = document.querySelector(".range-week");
+const noDataMessage = document.querySelector(".no-data-message");
+const content = document.querySelector(".content");
 
 // Event Listeners
 inputPopupToggleButton.addEventListener("click", toggleInputPopup);
@@ -28,12 +30,32 @@ window.onload = () => {
 	let { date } = inputForm.elements;
 	date.valueAsDate = new Date();
 	date.max = date.value;
-	rangeMonthInput.valueAsDate = new Date();
-	rangeMonthInput.max = rangeMonthInput.value;
-	rangeWeekInput.valueAsDate = new Date();
-	rangeWeekInput.max = rangeWeekInput.value;
-	generateDates(2000);
+	if (loadLocalStorage().length == 0) {
+		hideDefaultContent();
+	} else {
+		setDefaultValues();
+		setMaxValues();
+		setMinValues();
+	}
 };
+
+// No Data Message
+
+function showDefaultContent() {
+	let children = Array.from(content.children);
+	children.forEach((child) => {
+		child.classList.remove("display-none");
+	});
+	noDataMessage.classList.add("display-none");
+}
+
+function hideDefaultContent() {
+	let children = Array.from(content.children);
+	children.forEach((child) => {
+		child.classList.add("display-none");
+	});
+	noDataMessage.classList.remove("display-none");
+}
 
 // Chart Controls
 
@@ -60,7 +82,69 @@ function changeChartMode() {
 	}
 }
 
+function setMaxValues() {
+	rangeMonthInput.max = rangeMonthInput.value;
+	rangeWeekInput.max = rangeWeekInput.value;
+}
+
+function setDefaultValues() {
+	rangeMonthInput.valueAsDate = new Date();
+	rangeWeekInput.valueAsDate = new Date();
+}
+
+function setMinValues() {
+	let oldestDate = new Date(loadLocalStorage()[0][0]);
+	let oldestYear = oldestDate.getFullYear();
+	let oldestMonth =
+		oldestDate.getFullYear() +
+		"-" +
+		(oldestDate.getMonth() > 8
+			? oldestDate.getMonth() + 1
+			: "0" + (oldestDate.getMonth() + 1));
+	let oldestWeek = getWeekNumber(oldestDate);
+	rangeMonthInput.min = oldestMonth;
+	rangeWeekInput.min =
+		oldestDate.getFullYear() +
+		"-W" +
+		(oldestWeek > 9 ? oldestWeek : "0" + oldestWeek);
+	generateDates(oldestYear);
+
+	console.log(getWeekNumber(oldestDate));
+}
+
+function getWeekNumber(date) {
+	let dayNumberInWeek = new Date(date).getDay() + 1;
+	let start = new Date(date.getFullYear(), 0, 0 - dayNumberInWeek);
+	let difference =
+		date -
+		start +
+		(start.getTimezoneOffset() - date.getTimezoneOffset() * 60 * 1000);
+	let oneDay = 1000 * 60 * 60 * 24;
+	let day = Math.round(difference / oneDay);
+	let weekNumber = Math.ceil(day / 7);
+	return weekNumber;
+}
+
+/* -------------------------------------------------------------------------------
+
++================================================================================+
+| Backup function copied from internet if I find that the above one doesn't work |
++================================================================================+
+
+Date.prototype.getWeekNumber = function () {
+	var d = new Date(
+		Date.UTC(this.getFullYear(), this.getMonth(), this.getDate())
+	);
+	var dayNum = d.getUTCDay() || 7;
+	d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+	var yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+	return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+};
+
+------------------------------------------------------------------------------- */
+
 function generateDates(startDate) {
+	rangeYearInput.innerHTML = "";
 	let endDate = new Date().getFullYear();
 	for (let i = endDate; i >= startDate; i--) {
 		let option = document.createElement("option");
@@ -84,7 +168,14 @@ function processNewRecord() {
 	newRecord[0] = date.value;
 	newRecord[1] = parseInt(stressLevel.value);
 	saveLocalStorage(newRecord);
-	generateChart(loadLocalStorage());
+	let localData = loadLocalStorage();
+	if (localData.length === 1) {
+		showDefaultContent();
+		setDefaultValues();
+		setMaxValues();
+	}
+	generateChart(localData);
+	setMinValues();
 }
 
 // Local Storage Functions
