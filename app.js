@@ -1,30 +1,74 @@
+// Input Popup Toggle Button
+const inputPopupToggleButton = document.querySelector(".add-button");
+
+// Input Popup
 const inputPopupContainer = document.querySelector(".input-wrapper");
 const inputPopup = document.querySelector(".input-popup");
-const inputPopupToggleButton = document.querySelector(".add-button");
-const inputSubmitButton = document.querySelector(".input-submit-button");
+
+// Input Popup Form
 const inputForm = document.querySelector(".input-form");
+const inputSubmitButton = document.querySelector(".input-submit-button");
+
+// Chart Mode Input
 const chartModeInput = document.querySelector(".chart-mode");
-const chartTitle = document.querySelector(".chart-title");
+
+// Chart Range Input
 const rangeYearInput = document.querySelector(".range-year");
 const rangeMonthInput = document.querySelector(".range-month");
 const rangeWeekInput = document.querySelector(".range-week");
+
+// Chart Title
+const chartTitle = document.querySelector(".chart-title");
+
+// No Data Text
 const noDataMessage = document.querySelector(".no-data-message");
+
+// Main Content
 const content = document.querySelector(".content");
 
-// Event Listeners
+// Chart Mode (Default: Week)
+let chartMode = "week";
+
+// Chart Ranges
+let yearRange;
+let monthRange;
+let weekRange;
+
+// ======================= Event Listeners =======================
+
+// Input Pupup Toggle Button
 inputPopupToggleButton.addEventListener("click", toggleInputPopup);
+
+// Input Pupup Form
 inputSubmitButton.addEventListener("click", (e) => {
 	e.preventDefault();
 	toggleInputPopup();
 	processNewRecord();
 });
+
+// Chart Mode Input
 chartModeInput.addEventListener("change", changeChartMode);
 
-/*
-	Runs on page load
-	Sets date input default value & limit
-	Sets default values to chart range inputs
-	Generates chart range dropdown dates
+// Chart Range Inputs
+rangeYearInput.addEventListener("change", getYearRange);
+rangeMonthInput.addEventListener("change", getMonthRange);
+rangeWeekInput.addEventListener("change", getWeekRange);
+
+/*  ======================= Page Setup =======================
+
+	Runs on page load.
+
+	1. Sets the default value & limit value on the date input
+	in the input pupup.
+
+	2. Sets the default values on the chart range inputs.
+
+	3. Generates dates for the year range input.
+
+	4. Checks if the no data message should be shown.
+
+	5. Get the default values of the range inputs.
+
 */
 window.onload = () => {
 	let { date } = inputForm.elements;
@@ -36,28 +80,33 @@ window.onload = () => {
 		setDefaultValues();
 		setMaxValues();
 		setMinValues();
+		getYearRange();
+		getMonthRange();
+		getWeekRange();
 	}
 };
 
-// No Data Message
+// ======================= Chart =======================
 
-function showDefaultContent() {
-	let children = Array.from(content.children);
-	children.forEach((child) => {
-		child.classList.remove("display-none");
-	});
-	noDataMessage.classList.add("display-none");
+// ----------------------- Controls -----------------------
+
+// Retrieve the Values of the Range Inputs
+
+function getYearRange() {
+	yearRange = parseInt(rangeYearInput.value);
+	let localData = loadLocalStorage();
+	generateChart(localData);
 }
 
-function hideDefaultContent() {
-	let children = Array.from(content.children);
-	children.forEach((child) => {
-		child.classList.add("display-none");
-	});
-	noDataMessage.classList.remove("display-none");
+function getMonthRange() {
+	monthRange = rangeMonthInput.value;
 }
 
-// Chart Controls
+function getWeekRange() {
+	weekRange = rangeWeekInput.value;
+}
+
+// Change the Mode of the Chart
 
 function changeChartMode() {
 	switch (chartModeInput.value) {
@@ -66,32 +115,34 @@ function changeChartMode() {
 			rangeYearInput.classList.add("display-none");
 			rangeMonthInput.classList.add("display-none");
 			rangeWeekInput.classList.remove("display-none");
+			chartMode = "week";
 			break;
 		case "month":
 			chartTitle.innerText = "Monthly Stress";
 			rangeYearInput.classList.add("display-none");
 			rangeMonthInput.classList.remove("display-none");
 			rangeWeekInput.classList.add("display-none");
+			chartMode = "month";
 			break;
 		case "year":
 			chartTitle.innerText = "Yearly Stress";
 			rangeYearInput.classList.remove("display-none");
 			rangeMonthInput.classList.add("display-none");
 			rangeWeekInput.classList.add("display-none");
+			chartMode = "year";
 			break;
 	}
+	let localData = loadLocalStorage();
+	generateChart(localData);
 }
 
+// Set Max Values to Month & Week Range Inputs
 function setMaxValues() {
 	rangeMonthInput.max = rangeMonthInput.value;
 	rangeWeekInput.max = rangeWeekInput.value;
 }
 
-function setDefaultValues() {
-	rangeMonthInput.valueAsDate = new Date();
-	rangeWeekInput.valueAsDate = new Date();
-}
-
+// Set Min Values to Month & Week Range Inputs
 function setMinValues() {
 	let oldestDate = new Date(loadLocalStorage()[0][0]);
 	let oldestYear = oldestDate.getFullYear();
@@ -110,6 +161,7 @@ function setMinValues() {
 	generateDates(oldestYear);
 }
 
+// Get the Number of the Week of a Given Date
 Date.prototype.getWeekNumber = function () {
 	var d = new Date(
 		Date.UTC(this.getFullYear(), this.getMonth(), this.getDate())
@@ -120,6 +172,15 @@ Date.prototype.getWeekNumber = function () {
 	return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
 };
 
+// Set Default Values to Month & Week Range Inputs
+function setDefaultValues() {
+	rangeMonthInput.valueAsDate = new Date();
+	rangeWeekInput.valueAsDate = new Date();
+}
+
+// ----------------------- Generation -----------------------
+
+// Generate the Years for the Year Range Input
 function generateDates(startDate) {
 	rangeYearInput.innerHTML = "";
 	let endDate = new Date().getFullYear();
@@ -131,14 +192,7 @@ function generateDates(startDate) {
 	}
 }
 
-// Input Popup Functions
-
-function toggleInputPopup() {
-	inputPopupContainer.classList.toggle("active");
-	inputPopupToggleButton.classList.toggle("active");
-	inputPopup.classList.toggle("active");
-}
-
+// Process New Record
 function processNewRecord() {
 	let { date, stressLevel } = inputForm.elements;
 	let newRecord = [];
@@ -155,7 +209,7 @@ function processNewRecord() {
 	setMinValues();
 }
 
-// Local Storage Functions
+// ======================= Local Storage Functions =======================
 
 function loadLocalStorage() {
 	let localData;
@@ -163,6 +217,15 @@ function loadLocalStorage() {
 		localData = [];
 	} else {
 		localData = JSON.parse(localStorage.getItem("stressData"));
+	}
+	if (chartMode === "year") {
+		console.log("Show records only for: " + yearRange);
+	}
+	if (chartMode === "month") {
+		console.log("Show records only for: " + monthRange);
+	}
+	if (chartMode === "week") {
+		console.log("Show records only for: " + weekRange);
 	}
 	return localData;
 }
@@ -186,6 +249,34 @@ function saveLocalStorage(data) {
 	}
 	localData.sort();
 	localStorage.setItem("stressData", JSON.stringify(localData));
+}
+
+// ======================= Other =======================
+
+// Input Popup Function
+
+function toggleInputPopup() {
+	inputPopupContainer.classList.toggle("active");
+	inputPopupToggleButton.classList.toggle("active");
+	inputPopup.classList.toggle("active");
+}
+
+// -------------------- No Data Message --------------------
+
+function showDefaultContent() {
+	let children = Array.from(content.children);
+	children.forEach((child) => {
+		child.classList.remove("display-none");
+	});
+	noDataMessage.classList.add("display-none");
+}
+
+function hideDefaultContent() {
+	let children = Array.from(content.children);
+	children.forEach((child) => {
+		child.classList.add("display-none");
+	});
+	noDataMessage.classList.remove("display-none");
 }
 
 // Generate Chart
