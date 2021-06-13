@@ -94,16 +94,17 @@ window.onload = () => {
 
 function getYearRange() {
 	yearRange = parseInt(rangeYearInput.value);
-	let localData = loadLocalStorage();
-	generateChart(localData);
+	updateChart();
 }
 
 function getMonthRange() {
 	monthRange = rangeMonthInput.value;
+	updateChart();
 }
 
 function getWeekRange() {
 	weekRange = rangeWeekInput.value;
+	updateChart();
 }
 
 // Change the Mode of the Chart
@@ -132,8 +133,7 @@ function changeChartMode() {
 			chartMode = "year";
 			break;
 	}
-	let localData = loadLocalStorage();
-	generateChart(localData);
+	updateChart();
 }
 
 // Set Max Values to Month & Week Range Inputs
@@ -209,8 +209,15 @@ function processNewRecord() {
 	setMinValues();
 }
 
+// Generate Chart
+function updateChart() {
+	let localData = loadLocalStorage();
+	generateChart(localData);
+}
+
 // ======================= Local Storage Functions =======================
 
+// Load Data From LocalStorage & Apply Range Filters
 function loadLocalStorage() {
 	let localData;
 	if (localStorage.getItem("stressData") === null) {
@@ -230,6 +237,7 @@ function loadLocalStorage() {
 	return localData;
 }
 
+// Save/Overwrite To LocalStorage
 function saveLocalStorage(data) {
 	let localData;
 	let override = false;
