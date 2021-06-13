@@ -26,8 +26,8 @@ const noDataMessage = document.querySelector(".no-data-message");
 // Main Content
 const content = document.querySelector(".content");
 
-// Chart Mode (Default: Week)
-let chartMode = "week";
+// Chart Mode (Default: All)
+let chartMode = "all";
 
 // Chart Ranges
 let yearRange;
@@ -132,6 +132,13 @@ function changeChartMode() {
 			rangeWeekInput.classList.add("display-none");
 			chartMode = "year";
 			break;
+		case "all":
+			chartTitle.innerText = "All Stress";
+			rangeYearInput.classList.add("display-none");
+			rangeMonthInput.classList.add("display-none");
+			rangeWeekInput.classList.add("display-none");
+			chartMode = "all";
+			break;
 	}
 	updateChart();
 }
@@ -220,6 +227,7 @@ function updateChart() {
 // Load Data From LocalStorage & Apply Range Filters
 function loadLocalStorage() {
 	let localData;
+	let filteredData;
 	if (localStorage.getItem("stressData") === null) {
 		localData = [];
 	} else {
@@ -227,14 +235,21 @@ function loadLocalStorage() {
 	}
 	if (chartMode === "year") {
 		console.log("Show records only for: " + yearRange);
+		filteredData = localData.filter(filterYearRange);
 	}
 	if (chartMode === "month") {
 		console.log("Show records only for: " + monthRange);
+		filteredData = localData.filter(filterMonthRange);
 	}
 	if (chartMode === "week") {
 		console.log("Show records only for: " + weekRange);
+		filteredData = localData.filter(filterWeekRange);
 	}
-	return localData;
+	if (chartMode === "all") {
+		filteredData = localData;
+	}
+	console.log(filteredData);
+	return filteredData;
 }
 
 // Save/Overwrite To LocalStorage
@@ -257,6 +272,41 @@ function saveLocalStorage(data) {
 	}
 	localData.sort();
 	localStorage.setItem("stressData", JSON.stringify(localData));
+}
+
+// Range Filters
+
+function filterYearRange(item) {
+	if (new Date(item[0]).getFullYear() == yearRange) {
+		return true;
+	}
+	return false;
+}
+
+function filterMonthRange(item) {
+	if (item[0].slice(0, -3) == monthRange) {
+		return true;
+	}
+	return false;
+}
+
+function filterWeekRange(item) {
+	if (weekRange != undefined) {
+		let itemYear = new Date(item[0]).getFullYear();
+		let itemWeek = new Date(item[0]).getWeekNumber();
+		let rangeYear = weekRange.split("-")[0];
+		let rangeWeek = weekRange.split("-")[1].substring(1);
+		if (itemYear == rangeYear) {
+			console.log("same year");
+			if (itemWeek == rangeWeek) {
+				return true;
+			} else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 }
 
 // ======================= Other =======================
