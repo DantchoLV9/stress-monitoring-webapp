@@ -76,11 +76,6 @@ function renderChart() {
 		generateYears(new Date(data[0][0]).getFullYear());
 		setMinRangeInputValues(new Date(data[0][0]));
 	}
-	if (data.length == 0) {
-		toggleNoDataMessage(true);
-	} else {
-		toggleNoDataMessage(false);
-	}
 	sortedData = sortData(data);
 	if (sortedData.length == 0) {
 		toggleNoDataMessage(true);
