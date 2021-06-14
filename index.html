@@ -14,17 +14,17 @@
         <section class="content">
             <div class="chart-controls">
                 <select class="chart-mode" name="chart-mode">
-                    <option value="week">Week</option>
+                    <option value="week" selected>Week</option>
                     <option value="month">Month</option>
                     <option value="year">Year</option>
-                    <option value="all" selected>All</option>
+                    <option value="all">All</option>
                 </select>
                 <select class="chart-range range-year display-none" name="chart-range">
                 </select>
                 <input type="month" class="chart-range range-month display-none" name="chart-range">
-                <input type="week" class="chart-range range-week display-none" name="chart-range">
+                <input type="week" class="chart-range range-week" name="chart-range">
             </div>
-            <h2 class="chart-title">All Stress</h2>
+            <h2 class="chart-title">Weekly Stress</h2>
             <div class="chart-container">
                 <div class="chart">
                     <div class="bars-wrapper">
@@ -72,7 +72,6 @@
         <circle cx="412" cy="162" r="162" fill="#E5E5E5"/>
         <rect x="109" y="216" width="419" height="160" fill="#E5E5E5"/>
     </svg>      
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.3.2/dist/chart.min.js" integrity="sha256-qoN08nWXsFH+S9CtIq99e5yzYHioRHtNB9t2qy1MSmc=" crossorigin="anonymous"></script>  
     <script src="barChart.js"></script>
     <script src="app.js"></script>
 </body>

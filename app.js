@@ -1,3 +1,15 @@
+// Main Content
+const content = document.querySelector(".content");
+
+// No Data Text
+const noDataMessage = document.querySelector(".no-data-message");
+
+// Chart Container
+const chartContainer = document.querySelector(".chart-container");
+
+// Chart Title
+const chartTitle = document.querySelector(".chart-title");
+
 // Input Popup Toggle Button
 const inputPopupToggleButton = document.querySelector(".add-button");
 
@@ -12,103 +24,197 @@ const inputSubmitButton = document.querySelector(".input-submit-button");
 // Chart Mode Input
 const chartModeInput = document.querySelector(".chart-mode");
 
-// Chart Range Input
+// Chart Range Inputs
 const rangeYearInput = document.querySelector(".range-year");
 const rangeMonthInput = document.querySelector(".range-month");
 const rangeWeekInput = document.querySelector(".range-week");
 
-// Chart Title
-const chartTitle = document.querySelector(".chart-title");
-
-// No Data Text
-const noDataMessage = document.querySelector(".no-data-message");
-
-// Main Content
-const content = document.querySelector(".content");
-
-// Chart Mode (Default: All)
-let chartMode = "all";
+// Chart Mode (Default: Week)
+let chartMode = "week";
 
 // Chart Ranges
 let yearRange;
 let monthRange;
 let weekRange;
 
-// ======================= Event Listeners =======================
-
-// Input Pupup Toggle Button
+// Input Popup Toggle Button
 inputPopupToggleButton.addEventListener("click", toggleInputPopup);
 
-// Input Pupup Form
+// Input Popup Form Submit Button
 inputSubmitButton.addEventListener("click", (e) => {
 	e.preventDefault();
 	toggleInputPopup();
 	processNewRecord();
+	renderChart();
 });
 
 // Chart Mode Input
-chartModeInput.addEventListener("change", changeChartMode);
+chartModeInput.addEventListener("change", () => {
+	changeChartMode();
+	renderChart();
+});
 
 // Chart Range Inputs
-rangeYearInput.addEventListener("change", getYearRange);
-rangeMonthInput.addEventListener("change", getMonthRange);
-rangeWeekInput.addEventListener("change", getWeekRange);
+rangeYearInput.addEventListener("change", () => {
+	getYearRange();
+	renderChart();
+});
+rangeMonthInput.addEventListener("change", () => {
+	getMonthRange();
+	renderChart();
+});
+rangeWeekInput.addEventListener("change", () => {
+	getWeekRange();
+	renderChart();
+});
 
-/*  ======================= Page Setup =======================
+// Render the Chart
+function renderChart() {
+	let data = loadLocalStorage();
+	let sortedData;
+	if (data.length > 0) {
+		generateYears(new Date(data[0][0]).getFullYear());
+		setMinRangeInputValues(new Date(data[0][0]));
+	}
+	if (data.length == 0) {
+		toggleNoDataMessage(true);
+	} else {
+		toggleNoDataMessage(false);
+	}
+	sortedData = sortData(data);
+	if (sortedData.length == 0) {
+		toggleNoDataMessage(true);
+	} else {
+		toggleNoDataMessage(false);
+	}
+	generateChart(sortedData);
+}
 
-	Runs on page load.
+// Sort the Data Using the Range Input Values & Chart Mode
+function sortData(data) {
+	let filteredData;
+	switch (chartMode) {
+		case "year":
+			getYearRange();
+			filteredData = data.filter(filterYearRange);
+			break;
+		case "month":
+			getMonthRange();
+			filteredData = data.filter(filterMonthRange);
+			break;
+		case "week":
+			getWeekRange();
+			filteredData = data.filter(filterWeekRange);
+			break;
+		case "all":
+			filteredData = data;
+			break;
+	}
+	return filteredData;
+}
 
-	1. Sets the default value & limit value on the date input
-	in the input pupup.
+// Year Range Filter
+function filterYearRange(item) {
+	if (new Date(item[0]).getFullYear() == yearRange) {
+		return true;
+	}
+	return false;
+}
 
-	2. Sets the default values on the chart range inputs.
+// Month Range Filter
+function filterMonthRange(item) {
+	if (item[0].slice(0, -3) == monthRange) {
+		return true;
+	}
+	return false;
+}
 
-	3. Generates dates for the year range input.
+// Week Range Filter
+function filterWeekRange(item) {
+	let itemYear = new Date(item[0]).getFullYear();
+	let itemWeek = new Date(item[0]).getWeekNumber();
+	let rangeYear = weekRange.split("-")[0];
+	let rangeWeek = weekRange.split("-")[1].substring(1);
+	if (itemYear == rangeYear) {
+		if (itemWeek == rangeWeek) {
+			return true;
+		} else {
+			return false;
+		}
+	} else {
+		return false;
+	}
+}
 
-	4. Checks if the no data message should be shown.
+// Get the Year Range Input Value
+function getYearRange() {
+	yearRange = parseInt(rangeYearInput.value);
+}
 
-	5. Get the default values of the range inputs.
+// Get the Month Range Input Value
+function getMonthRange() {
+	monthRange = rangeMonthInput.value;
+}
 
-*/
-window.onload = () => {
+// Get the Week Range Input Value
+function getWeekRange() {
+	weekRange = rangeWeekInput.value;
+}
+
+// Set Min Values to Month & Week Range Inputs
+function setMinRangeInputValues(oldestDate) {
+	let oldestYear = oldestDate.getFullYear();
+	let oldestMonth =
+		oldestYear +
+		"-" +
+		(oldestDate.getMonth() > 8
+			? oldestDate.getMonth() + 1
+			: "0" + (oldestDate.getMonth() + 1));
+	let oldestWeek =
+		oldestYear +
+		"-W" +
+		(oldestDate.getWeekNumber() > 9
+			? oldestDate.getWeekNumber()
+			: "0" + oldestDate.getWeekNumber());
+	rangeMonthInput.min = oldestMonth;
+	rangeWeekInput.min = oldestWeek;
+}
+
+// Set Max Values to Month & Week Range Inputs
+function setMaxRangeInputValues() {
+	rangeMonthInput.max = rangeMonthInput.value;
+	rangeWeekInput.max = rangeWeekInput.value;
+}
+
+// Set Default Values to Month & Week Range Inputs
+function setDefaultRangeInputValues() {
+	rangeMonthInput.valueAsDate = new Date();
+	rangeWeekInput.valueAsDate = new Date();
+}
+
+// Set Default & Max Values to Input Form
+function setDefaultInputValues() {
 	let { date } = inputForm.elements;
 	date.valueAsDate = new Date();
 	date.max = date.value;
-	if (loadLocalStorage().length == 0) {
-		hideDefaultContent();
-	} else {
-		setDefaultValues();
-		setMaxValues();
-		setMinValues();
-		getYearRange();
-		getMonthRange();
-		getWeekRange();
+}
+
+// Generate Years For Year Range Input
+function generateYears(startYear) {
+	rangeYearInput.innerHTML = "";
+	let endYear = new Date().getFullYear();
+	for (let year = endYear; year >= startYear; year--) {
+		let option = document.createElement("option");
+		option.innerText = year;
+		option.value = year;
+		if (year == yearRange) {
+			option.selected = true;
+		}
+		rangeYearInput.append(option);
 	}
-};
-
-// ======================= Chart =======================
-
-// ----------------------- Controls -----------------------
-
-// Retrieve the Values of the Range Inputs
-
-function getYearRange() {
-	yearRange = parseInt(rangeYearInput.value);
-	updateChart();
 }
 
-function getMonthRange() {
-	monthRange = rangeMonthInput.value;
-	updateChart();
-}
-
-function getWeekRange() {
-	weekRange = rangeWeekInput.value;
-	updateChart();
-}
-
-// Change the Mode of the Chart
-
+// Change Chart Mode
 function changeChartMode() {
 	switch (chartModeInput.value) {
 		case "week":
@@ -140,32 +246,66 @@ function changeChartMode() {
 			chartMode = "all";
 			break;
 	}
-	updateChart();
 }
 
-// Set Max Values to Month & Week Range Inputs
-function setMaxValues() {
-	rangeMonthInput.max = rangeMonthInput.value;
-	rangeWeekInput.max = rangeWeekInput.value;
+// Create New Record
+function processNewRecord() {
+	let { date, stressLevel } = inputForm.elements;
+	let newRecord = [];
+	newRecord[0] = date.value;
+	newRecord[1] = parseInt(stressLevel.value);
+	saveLocalStorage(newRecord);
 }
 
-// Set Min Values to Month & Week Range Inputs
-function setMinValues() {
-	let oldestDate = new Date(loadLocalStorage()[0][0]);
-	let oldestYear = oldestDate.getFullYear();
-	let oldestMonth =
-		oldestDate.getFullYear() +
-		"-" +
-		(oldestDate.getMonth() > 8
-			? oldestDate.getMonth() + 1
-			: "0" + (oldestDate.getMonth() + 1));
-	let oldestWeek = oldestDate.getWeekNumber();
-	rangeMonthInput.min = oldestMonth;
-	rangeWeekInput.min =
-		oldestDate.getFullYear() +
-		"-W" +
-		(oldestWeek > 9 ? oldestWeek : "0" + oldestWeek);
-	generateDates(oldestYear);
+// Toggle No Data Message
+function toggleNoDataMessage(state) {
+	if (state) {
+		chartContainer.classList.add("display-none");
+		noDataMessage.classList.remove("display-none");
+	} else {
+		chartContainer.classList.remove("display-none");
+		noDataMessage.classList.add("display-none");
+	}
+}
+
+// Toggle Input Popup
+function toggleInputPopup() {
+	inputPopupContainer.classList.toggle("active");
+	inputPopupToggleButton.classList.toggle("active");
+	inputPopup.classList.toggle("active");
+}
+
+// Load Data From LocalStorage
+function loadLocalStorage() {
+	let localData;
+	if (localStorage.getItem("stressData") === null) {
+		localData = [];
+	} else {
+		localData = JSON.parse(localStorage.getItem("stressData"));
+	}
+	return localData;
+}
+
+// Save/Overwrite To LocalStorage
+function saveLocalStorage(data) {
+	let localData;
+	let overwrite = false;
+	if (localStorage.getItem("stressData") === null) {
+		localData = [];
+	} else {
+		localData = JSON.parse(localStorage.getItem("stressData"));
+	}
+	localData.forEach((element) => {
+		if (element[0] === data[0]) {
+			element[1] = data[1];
+			overwrite = true;
+		}
+	});
+	if (!overwrite) {
+		localData.push(data);
+	}
+	localData.sort();
+	localStorage.setItem("stressData", JSON.stringify(localData));
 }
 
 // Get the Number of the Week of a Given Date
@@ -179,164 +319,7 @@ Date.prototype.getWeekNumber = function () {
 	return Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
 };
 
-// Set Default Values to Month & Week Range Inputs
-function setDefaultValues() {
-	rangeMonthInput.valueAsDate = new Date();
-	rangeWeekInput.valueAsDate = new Date();
-}
-
-// ----------------------- Generation -----------------------
-
-// Generate the Years for the Year Range Input
-function generateDates(startDate) {
-	rangeYearInput.innerHTML = "";
-	let endDate = new Date().getFullYear();
-	for (let i = endDate; i >= startDate; i--) {
-		let option = document.createElement("option");
-		option.innerText = i;
-		option.value = i;
-		rangeYearInput.append(option);
-	}
-}
-
-// Process New Record
-function processNewRecord() {
-	let { date, stressLevel } = inputForm.elements;
-	let newRecord = [];
-	newRecord[0] = date.value;
-	newRecord[1] = parseInt(stressLevel.value);
-	saveLocalStorage(newRecord);
-	let localData = loadLocalStorage();
-	if (localData.length === 1) {
-		showDefaultContent();
-		setDefaultValues();
-		setMaxValues();
-	}
-	generateChart(localData);
-	setMinValues();
-}
-
-// Generate Chart
-function updateChart() {
-	let localData = loadLocalStorage();
-	generateChart(localData);
-}
-
-// ======================= Local Storage Functions =======================
-
-// Load Data From LocalStorage & Apply Range Filters
-function loadLocalStorage() {
-	let localData;
-	let filteredData;
-	if (localStorage.getItem("stressData") === null) {
-		localData = [];
-	} else {
-		localData = JSON.parse(localStorage.getItem("stressData"));
-	}
-	if (chartMode === "year") {
-		console.log("Show records only for: " + yearRange);
-		filteredData = localData.filter(filterYearRange);
-	}
-	if (chartMode === "month") {
-		console.log("Show records only for: " + monthRange);
-		filteredData = localData.filter(filterMonthRange);
-	}
-	if (chartMode === "week") {
-		console.log("Show records only for: " + weekRange);
-		filteredData = localData.filter(filterWeekRange);
-	}
-	if (chartMode === "all") {
-		filteredData = localData;
-	}
-	console.log(filteredData);
-	return filteredData;
-}
-
-// Save/Overwrite To LocalStorage
-function saveLocalStorage(data) {
-	let localData;
-	let override = false;
-	if (localStorage.getItem("stressData") === null) {
-		localData = [];
-	} else {
-		localData = JSON.parse(localStorage.getItem("stressData"));
-	}
-	localData.forEach((element) => {
-		if (element[0] === data[0]) {
-			element[1] = data[1];
-			override = true;
-		}
-	});
-	if (!override) {
-		localData.push(data);
-	}
-	localData.sort();
-	localStorage.setItem("stressData", JSON.stringify(localData));
-}
-
-// Range Filters
-
-function filterYearRange(item) {
-	if (new Date(item[0]).getFullYear() == yearRange) {
-		return true;
-	}
-	return false;
-}
-
-function filterMonthRange(item) {
-	if (item[0].slice(0, -3) == monthRange) {
-		return true;
-	}
-	return false;
-}
-
-function filterWeekRange(item) {
-	if (weekRange != undefined) {
-		let itemYear = new Date(item[0]).getFullYear();
-		let itemWeek = new Date(item[0]).getWeekNumber();
-		let rangeYear = weekRange.split("-")[0];
-		let rangeWeek = weekRange.split("-")[1].substring(1);
-		if (itemYear == rangeYear) {
-			console.log("same year");
-			if (itemWeek == rangeWeek) {
-				return true;
-			} else {
-				return false;
-			}
-		} else {
-			return false;
-		}
-	}
-}
-
-// ======================= Other =======================
-
-// Input Popup Function
-
-function toggleInputPopup() {
-	inputPopupContainer.classList.toggle("active");
-	inputPopupToggleButton.classList.toggle("active");
-	inputPopup.classList.toggle("active");
-}
-
-// -------------------- No Data Message --------------------
-
-function showDefaultContent() {
-	let children = Array.from(content.children);
-	children.forEach((child) => {
-		child.classList.remove("display-none");
-	});
-	noDataMessage.classList.add("display-none");
-}
-
-function hideDefaultContent() {
-	let children = Array.from(content.children);
-	children.forEach((child) => {
-		child.classList.add("display-none");
-	});
-	noDataMessage.classList.remove("display-none");
-}
-
-// Generate Chart
-
-generateChart(loadLocalStorage());
+setDefaultInputValues();
+setDefaultRangeInputValues();
+setMaxRangeInputValues();
+renderChart();
